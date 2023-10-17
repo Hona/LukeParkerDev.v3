@@ -29,3 +29,48 @@ input:-webkit-autofill:focus {
     background-color 600000s 0s,
     color 600000s 0s;
 }
+
+/* Headings use JetBrains Mono */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-mono;
+}
+
+/* Background gradient ellipses */
+.bg-gradient-ellipse {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  z-index: -1;
+  /* backdrop-filter: blur(100px); */
+  /* opacity: 0.05; */
+}
+
+	.bg-gradient-ellipse:nth-child(1) {
+		left: -40%;
+		top: -40%;
+		transform: rotate(0deg);
+    scale: 0.3;
+	}
+
+	.bg-gradient-ellipse:nth-child(2) {
+		left: 50%;
+		top: 0%;
+    scale: 0.2;
+	}
+
+  .overflow-container {
+    overflow: hidden;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: scroll;
+  }
+
+/* header, section, footer {
+  width: 100%;
+  max-width: var(--content-width-desktop);
+  margin: auto;
+} */

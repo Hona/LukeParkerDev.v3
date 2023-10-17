@@ -22,11 +22,29 @@ module.exports = {
         14: '3.5rem',
       },
       fontFamily: {
-        sans: ['var(--font-space-grotesk)', ...fontFamily.sans],
+        sans: ["Open Sans", ...fontFamily.sans],
+        mono: ["JetBrains Mono", ...fontFamily.mono],
       },
       colors: {
-        primary: colors.pink,
+        'primary': {
+          '50': '#fff1f3',
+          '100': '#fee5e9',
+          '200': '#fdced7',
+          '300': '#faa7b7',
+          '400': '#f77591',
+          '500': '#ef476f',
+          '600': '#db2357',
+          '700': '#b9174a',
+          '800': '#9b1644',
+          '900': '#85163f',
+          '950': '#4a071e',
+      },      
+        secondary: '#06D6A0',
+        tertiary: '#FFD166',
         gray: colors.gray,
+        elephant: '#192E39',
+        surface: '#1E3B4A',
+        'surface-accent': '#26547C'
       },
       typography: ({ theme }) => ({
         DEFAULT: {
