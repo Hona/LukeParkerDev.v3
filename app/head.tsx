@@ -11,9 +11,6 @@ export default function Head() {
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <meta content="width=device-width, initial-scale=1" name="viewport" />
-
-      <link href="https://fonts.googleapis.com/css?family=JetBrains Mono" rel="stylesheet" />
-      <link href="https://fonts.googleapis.com/css?family=Open Sans" rel="stylesheet" />
     </>
   )
 }

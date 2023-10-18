@@ -1,7 +1,7 @@
 import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
-import { Space_Grotesk } from 'next/font/google'
+import { Open_Sans, JetBrains_Mono } from 'next/font/google'
 import { Analytics, AnalyticsConfig } from 'pliny/analytics'
 import { SearchProvider, SearchConfig } from 'pliny/search'
 import Header from '@/components/Header'
@@ -10,11 +10,18 @@ import Footer from '@/components/Footer'
 import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
+import Image from 'next/image'
 
-const space_grotesk = Space_Grotesk({
+const open_sans = Open_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-space-grotesk',
+  variable: '--font-open-sans',
+})
+
+const jetbrains_mono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 })
 
 export const metadata: Metadata = {
@@ -61,7 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang={siteMetadata.language}
-      className={`${space_grotesk.variable} scroll-smooth`}
+      className={`${open_sans.variable} ${jetbrains_mono.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
@@ -75,8 +82,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       <body className="bg-white text-black antialiased dark:bg-elephant dark:text-white">
         <div className="overflow-container">
-          <img className="bg-gradient-ellipse" src="/static/images/triangle.png" />
-          <img className="bg-gradient-ellipse" src="/static/images/circle.png" />
+          <Image
+            className="bg-gradient-ellipse"
+            src="/static/images/triangle.png"
+            width={800}
+            height={800}
+            alt={'a teal triangle'}
+            role={'presentation'}
+          />
+          <Image
+            className="bg-gradient-ellipse"
+            src="/static/images/circle.png"
+            width={800}
+            height={800}
+            alt={'a yellow circle'}
+            role={'presentation'}
+          />
           <ThemeProviders>
             <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
             <SectionContainer>
