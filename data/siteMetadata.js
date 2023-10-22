@@ -3,7 +3,8 @@ const siteMetadata = {
   title: 'Luke Parker (Hona)',
   author: 'Luke Parker',
   headerTitle: 'LukeParkerDev',
-  description: 'Luke is a Software Engineer at SSW, an expert in .NET and Clean Architecture. With a passion for sharing knowledge, he loves educating the developer community with thought-provoking blogs at lukeparker.dev, covering hot topics for the modern Microsoft developer.\n\nAs a local Brisbane Full Stack User Group organizer and presenter, he\'s all about creating thriving tech communities. 🤝',
+  description:
+    "Luke is a Software Engineer at SSW, an expert in .NET and Clean Architecture. With a passion for sharing knowledge, he loves educating the developer community with thought-provoking blogs at lukeparker.dev, covering hot topics for the modern Microsoft developer.\n\nAs a local Brisbane Full Stack User Group organizer and presenter, he's all about creating thriving tech communities. 🤝",
   language: 'en-au',
   theme: 'dark', // system, dark or light
   siteUrl: 'https://lukeparker.dev',
