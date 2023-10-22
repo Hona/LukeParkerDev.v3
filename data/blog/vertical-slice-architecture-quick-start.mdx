@@ -1,0 +1,94 @@
+---
+title: 'Vertical Slice Architecture: Quick start with .NET 8'
+date: '2023-10-22'
+tags:
+  - Software Architecture
+  - Vertical Slice Architecture
+  - .NET 8
+  - 'Csharp'
+summary: >-
+    Vertical Slice Architecture is a great way to structure your code. Getting started with a new or familiar architecture can be daunting, so I've created a quick start guide to get you up and running with a dotnet new template.
+---
+
+## Introduction
+
+Vertical Slice Architecture (VSA) is a great way to structure your code. Getting started with a new or familiar architecture can be daunting, so I've created a quick start guide to get you up and running by using a `dotnet new` template.
+
+### What is Vertical Slice Architecture?
+
+VSA is primarily about separating use cases or features entirely, in such a way that they do not rely or communicate on each other. This is reflected via the 'vertical' nature of the architecture, where each feature is a vertical slice of the application.
+
+Compared to traditional structures like N-tier or even Clean Architecture, where they are organised in ways of grouping by technical concern (Web API, Data Access), VSA groups by the feature or use case.
+
+To get a quick briefing on a few of the key players in Software Architecture watch my User Group here:
+
+[Vertical Slice Architecture: How Does it Compare to Clean Architecture](https://www.youtube.com/watch?v=dMgj1MdwrRE)
+
+This theory is all well and good, but how do I represent this in a .NET Application?
+
+### The Template
+
+[https://github.com/Hona/VerticalSliceArchitecture](github.com/Hona/VerticalSliceArchitecture)
+
+The template is a simple .NET 8 template that creates a solution with 1 source project (ASP.NET Core) & 1 test project (xUnit).
+
+The source project is setup with a few important folders to get you started:
+
+```tree
+📁 [ProjectName]/
+│
+│── 📁 Features/ 
+│   │
+│   │── 📁 Todo/
+│       │── 🤔
+|
+│── 📁 Common/ 
+    │── 📄 AppDbContext.cs
+    │── 📄 *
+```
+
+What is inside each feature folder however?
+
+This is where a little magic happens.
+
+```tree
+📁 Todo/
+│
+│── 📁 CreateTodo/
+│   │── 📄 CreateTodoEndpoint.cs
+│   │── 📄 CreateTodoRequest.cs
+|
+|── 📁 GetTodo/
+|   │── 📄 *
+|
+|── 📁 [...]
+|
+|── 📄 TodoEntity.cs
+|── 📄 TodoRepository.cs
+|── 📄 DependencyInjection.cs
+```
+
+From here, as you can see - each feature contains an entity & repository for each use case to consume. As well as a Dependency Injection class to wire up services to the IoC container.
+
+This is a great way to get started with VSA, and I hope you find it useful! 
+
+Bigger enterprise apps will need more features & different things to consider, like a Modular Monolith. But, that is for another time.
+
+### How to use the template
+
+To use the template, you need to install it first. This is done via the `dotnet new` command.
+
+```bash
+dotnet new install Hona.VerticalSliceArchitecture.Template
+```
+
+Then, create a project (e.g. called 'Sprout')
+
+```bash
+mkdir Sprout
+cd Sprout
+
+dotnet new hona-vsa
+```
+
+Let me know your thoughts below, or if I should add anything else to the template!
