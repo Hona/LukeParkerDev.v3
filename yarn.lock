@@ -11782,7 +11782,7 @@ __metadata:
     eslint-config-next: 13.5.6
     eslint-config-prettier: ^9.0.0
     eslint-plugin-prettier: ^5.0.1
-    github-slugger: ^1.4.0
+    github-slugger: ^2.0.0
     gray-matter: ^4.0.3
     husky: ^8.0.3
     image-size: 1.0.2
