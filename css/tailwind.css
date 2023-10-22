@@ -92,3 +92,8 @@ h1, h2, h3, h4, h5, h6 {
 .prose :where(code):not(:where([class~="not-prose"] *)) {
   @apply text-tertiary;
 }
+
+/* Goes offscreen, unscrollable otherwise */
+.blog-section {
+  max-width: min(48rem, 100vw);
+}
