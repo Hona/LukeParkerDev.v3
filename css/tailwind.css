@@ -88,3 +88,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: var(--content-width-desktop);
   margin: auto;
 } */
+
+.prose :where(code):not(:where([class~="not-prose"] *)) {
+  @apply text-tertiary;
+}
