@@ -13,7 +13,7 @@ const siteMetadata = {
   siteLogo: '/static/images/hona.png',
   socialBanner: '/static/images/twitter-card.png',
   //mastodon: 'https://mastodon.social/@mastodonuser',
-  email: 'lukeparkerdev@outlook.com',
+  email: 'its@lukeparker.dev',
   github: 'https://github.com/Hona',
   twitter: 'https://twitter.com/LukeParkerDev',
   //facebook: 'https://facebook.com',
