@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Make Disqus work with current theme (transparency)
+   Note: Toggle doesn't update it inside the iframe, don't think there's an easy workaround
+*/
+:root {
+  color-scheme: light dark;
+}
+
+iframe {
+  color-scheme: light;
+}
+
+
 .task-list-item::before {
   @apply hidden;
 }
@@ -47,9 +59,11 @@ h1, h2, h3, h4, h5, h6 {
 
 	.bg-gradient-ellipse:nth-child(1) {
 		left: -40%;
-		top: -40%;
+		/* top: -40%; */
 		transform: rotate(0deg);
     scale: 0.3;
+
+    @apply top-[20%] md:top-[-40%];
 	}
 
 	.bg-gradient-ellipse:nth-child(2) {
