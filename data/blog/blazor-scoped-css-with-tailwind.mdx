@@ -1,0 +1,188 @@
+---
+title: 'Tailwind & Blazor: Making it work with scoped CSS'
+date: '2023-12-21'
+tags:
+  - Blazor
+  - Tailwind
+summary: A guide on simplifying styles by enhancing scoped CSS to support Tailwind as well as SCSS.
+---
+
+## The Problem
+
+A little while ago I was wanting to find a way to allow my PostCSS Tailwind styles to be close to my Razor components.
+
+Without any additional work, you might end up building styles & components in the following structure:
+
+```tree
+📁 BlazorApp/
+│
+│── 📁 Shared/ 
+│   │
+│   │── MyButton.razor
+|
+│── 📁 Styles/ 
+    │── 📄 MyButton.css
+```
+
+`MyButton.razor`
+
+```razor
+<button class="bg-amber-800" @onclick="IncrementCount">Click me</button>
+```
+
+`MyButton.css`
+
+```css
+﻿button {
+    @apply rounded-xl p-8;
+    width: calc(100% - 2rem);
+}
+```
+
+This omits the other files like `tailwind.config.js` that come from a project setup.
+
+> Checkout Chris Sainty's [awesome tutorial](https://chrissainty.com/adding-tailwind-css-v3-to-a-blazor-app/) for setting up Tailwind in a Blazor project.
+> You can imagine this blog post as an extension to that tutorial.
+
+Note that inline styles already work if you followed Chris's setup, however when we need to get a bit more power, like writing styles once & using it many times, or mixing tailwind with typical css (e.g. the width calculation above), this approach falls short.
+
+So, back to the structure. There are two problems:
+
+- When I want to change `MyButton` I've got the files all scattered about. This violates the [proximity principle](https://kula.blog/posts/proximity_principle/) and makes it harder to maintain - especially as your app grows.
+- Writing styles that get built using PostCSS into a published CSS file means that you don't gain the benefits of scoped CSS. You have to manually make sure there are no selectors that clash with other components.
+- You can't use @apply or write mixed CSS & Tailwind styles.
+
+## The Solution
+
+Let's do better now.
+
+First, lets create a SCSS file next to the component. 
+
+```tree
+📁 Shared/ 
+│── MyButton.razor
+│── MyButton.razor.scss
+```
+
+This is not going to work out of the box, yet.
+
+The first step is to extend the `tailwind.config.js` file to find classes in any razor file or SCSS file.
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./**/*.{razor,css,scss,cs,html,js}"], // 👈 Add SCSS & Razor files
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+This is a nice glob of all things that could include a Tailwind class.
+
+We have to make sure that SCSS compilation works for all users no matter the IDE or extensions. Previously for SCSS a lot of users would have to install an extension to get it to work. e.g. [this one](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.SassCompiler) for Visual Studio.
+
+We actually can make this work in the MSBuild process meaning any IDE or even the command line will work.
+
+In your csproj file, e.g. `BlazorApp.csproj` add the following:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BlazorComponentUtilities" Version="1.8.0" />
+        ...
+    </ItemGroup>
+
+    <!-- 👇 New Code -->
+    <Target Name="StylesCompile" BeforeTargets="BeforeBuild">
+        <!-- On Error, write the stderr as a build error -->
+        <Exec ConsoleToMSBuild="true" Command="npm run build:scoped-css" />
+        <Exec Command="npm run build:css" />
+    </Target>
+    <!-- 👆 New Code -->
+    
+</Project>
+```
+
+This allows us to run an NPM script BEFORE any files are added to the build process.
+You might be able to figure out where this is headed.
+
+Now we need to add the `package.json` that contains the scripts `build:scoped-css` and `build:css`
+
+```json
+{
+  "devDependencies": {
+    // ⚠️ Versions may vary
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.19",
+    "postcss-cli": "^10.0.0",
+    "tailwindcss": "^3.2.4",
+    "glob": "^8.0.3"
+  },
+  "scripts": {
+    "build:scoped-css": "node build-scoped-css.js",
+    "build:css": "postcss wwwroot/css/app.scss -o wwwroot/css/app.min.css"
+  }
+}
+```
+
+Note the differences between the scripts.
+
+- `build:scoped-css` runs a custom script `build-scoped-css.js` that we will create in a moment.
+- `build:css` processes the single 'global' SCSS file into a single CSS file. This is nothing special - however, if we're adding SCSS we might as well make it consistent.
+
+It's magic time! Create a file called `build-scoped-css.js` in the root of your project.
+
+```js
+const glob = require('glob');
+const {exec} = require('child_process');
+
+// 👇 Find every scoped SCSS file
+glob("**/*.razor.scss", function (er, files) {
+    files.forEach(function (file) {
+        // 👇 Output the processed file as *.razor.css, which is a normal scoped CSS file
+        const command = `npx postcss "${file}" -o "${file.replace('.razor.scss', '.razor.css')}"`;
+        console.log(command)
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`);
+                return;
+            }
+            console.log(`stdout: ${stdout}`);
+            console.error(`stderr: ${stderr}`);
+        });
+    });
+})
+```
+
+Make sure your index.html file includes both the Scoped CSS file and the global CSS file.
+
+```html
+<head>
+    <link href="css/app.min.css" rel="stylesheet" />
+    <link href="BlazorApp.styles.css" rel="stylesheet" />
+</head>
+```
+
+To summarise what we just added, a few steps occur.
+
+1. Before running any Blazor build steps we run 2 scripts
+2. The first script outputs *.razor.css files for every *.razor.scss file
+3. The second script processes the global SCSS file into a single CSS file
+4. The Blazor build process then runs as normal, with the working CSS files included
+
+🥳 That is all it takes!
+
+If you want a complete example to follow rather than a step by step, here is my repository that setup an example project with these steps completed:
+
+⭐ https://github.com/Hona/Blazor.Tailwind
+
+It features a demo website on GitHub pages that you can explore also.
