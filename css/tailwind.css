@@ -97,3 +97,9 @@ h1, h2, h3, h4, h5, h6 {
 .blog-section {
   max-width: min(48rem, 100vw);
 }
+
+@media (min-width: 768px) {
+  .hona-card {
+    width: calc(50% - 0.5rem);
+  }
+}
