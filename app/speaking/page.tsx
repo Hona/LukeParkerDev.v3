@@ -8,7 +8,99 @@ export const metadata = genPageMetadata({
   description: 'Conferences & user groups I speak at',
 })
 
+const UpcomingTalks = ({ data }) => (
+  <>
+    <h2 className="text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9">
+      Upcoming Talks
+    </h2>
+    <div className="my-4">
+      {data.map((s, index) => (
+        <Card
+          key={index}
+          title={s.title}
+          description={`${s.date} | ${s.at} | ${s.country} | ${s.city}`}
+          href={s.videoUrl}
+          linkText={'Watch'}
+          padding={false}
+        />
+      ))}
+    </div>
+  </>
+)
+
+const PastTalks = ({ data }) => (
+  <>
+    <h2 className="text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9 py-4">
+      Past Talks
+    </h2>
+    <div className="hidden md:block">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-900 dark:text-white dark:bg-surface">
+        <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-6 py-3">
+              When
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Talk
+            </th>
+            <th scope="col" className="px-6 py-3">
+              At
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Where
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Video
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .map((s, index) => (
+              <tr key={index} className="border-b dark:border-gray-700">
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium whitespace-nowrap  whitespace-nowrap	"
+                >
+                  {s.date}
+                </th>
+                <td className="px-6 py-4">{s.title}</td>
+                <td className="px-6 py-4 whitespace-nowrap	">{s.at}</td>
+                <td className="px-6 py-4 whitespace-nowrap	">
+                  {s.country} | {s.city}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap	">
+                  <Link
+                    href={s.videoUrl}
+                    className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Watch
+                  </Link>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+    <div className="md:hidden">
+      {data.map((s, index) => (
+        <Card
+          key={index}
+          title={s.title}
+          description={`${s.date} | ${s.at} | ${s.country} | ${s.city}`}
+          href={s.videoUrl}
+          linkText={'Watch'}
+        />
+      ))}
+    </div>
+  </>
+)
+
 export default function Page() {
+  const upcomingTalks = speakingData.filter((s) => new Date(s.date) > new Date())
+  const pastTalks = speakingData.filter((s) => new Date(s.date) <= new Date())
+
   return (
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -21,69 +113,8 @@ export default function Page() {
           </p>
         </div>
         <div className="container py-12">
-          <div className="-m-4 flex flex-wrap">
-            <div className="hidden md:block">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-900 dark:text-white dark:bg-surface">
-                <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      When
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Talk
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      At
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Where
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Video
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {speakingData
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                    .map((s, index) => (
-                      <tr key={index} className="border-b dark:border-gray-700">
-                        <th
-                          scope="row"
-                          className="px-6 py-4 font-medium whitespace-nowrap  whitespace-nowrap	"
-                        >
-                          {s.date}
-                        </th>
-                        <td className="px-6 py-4">{s.title}</td>
-                        <td className="px-6 py-4 whitespace-nowrap	">{s.at}</td>
-                        <td className="px-6 py-4 whitespace-nowrap	">
-                          {s.country} | {s.city}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap	">
-                          <Link
-                            href={s.videoUrl}
-                            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                          >
-                            Watch
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="md:hidden">
-              {speakingData.map((s, index) => (
-                <Card
-                  key={index}
-                  title={s.title}
-                  description={`${s.date} | ${s.at} | ${s.country} | ${s.city}`}
-                  href={s.videoUrl}
-                  linkText={'Watch'}
-                />
-              ))}
-            </div>
-          </div>
+          {upcomingTalks.length > 0 && <UpcomingTalks data={upcomingTalks} />}
+          <PastTalks data={pastTalks} />
         </div>
       </div>
     </>

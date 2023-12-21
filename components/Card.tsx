@@ -1,8 +1,8 @@
 import Image from './Image'
 import Link from './Link'
 
-const Card = ({ title, description, imgSrc = null, href, linkText }) => (
-  <div className="md max-w-[544px] p-4 md:w-1/2">
+const Card = ({ title, description, imgSrc = null, href, linkText, padding = true }) => (
+  <div className={`md max-w-[544px] ${padding ? 'p-4' : 'p-4 md:p-0'} md:w-1/2}`}>
     <div
       className={`${
         imgSrc ? 'h-full' : ''
