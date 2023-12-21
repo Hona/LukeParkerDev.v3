@@ -32,13 +32,27 @@ const speakingData = [
         videoUrl: 'https://www.youtube.com/watch?v=dMgj1MdwrRE'
     },
     {
-        date: '2024-09-20',
+        date: '2023-11-02',
         title: 'Vertical Slice Architecture: How Does it Compare to Clean Architecture?',
         country: 'Australia',
         city: 'Brisbane',
-        at: 'Brisbane Full Stack UG',
-        videoUrl: 'https://www.youtube.com/watch?v=dMgj1MdwrRE'
+        at: 'Brisbane .NET UG',
+        videoUrl: 'https://www.youtube.com/watch?v=vZ_ytOgFk6E'
     },
+    {
+        date: '2023-11-16',
+        title: 'Vertical Slice Architecture: How Does it Compare to Clean Architecture',
+        country: 'Online',
+        at: '.NET Conf',
+        videoUrl: 'https://www.youtube.com/watch?v=T-EwN9UqRwE&list=PLdo4fOcmZ0oULyHSPBx-tQzePOYlhvrAU&index=30'
+    },
+    {
+        date: '2024-02-12',
+        title: 'Spawn an Online Game with Blazor & .NET 8 in under 60 minutes',
+        country: 'Australia',
+        city: 'Sydney',
+        at: 'NDC Sydney'
+    }
 ]
 
 export default speakingData

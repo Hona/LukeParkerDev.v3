@@ -2,12 +2,21 @@ import Image from './Image'
 import Link from './Link'
 import React from 'react'
 
-const Card = ({ title, description, imgSrc = '', href = '', linkText = '', padding = true }) => (
+const Card = ({
+  title,
+  description,
+  imgSrc = '',
+  href = '',
+  linkText = '',
+  padding = true,
+  titleClass = '',
+  showBorder = true,
+}) => (
   <div className={`md:max-w-[544px] ${padding ? 'p-4' : 'p-4 md:p-0'} w-full md:w-1/2`}>
     <div
-      className={`${
-        imgSrc ? 'h-full' : ''
-      } overflow-hidden rounded-md border-2 border-gray-200 border-opacity-60 dark:border-surface-accent dark:bg-surface`}
+      className={`${imgSrc ? 'h-full' : ''} overflow-hidden rounded-md ${
+        showBorder ? 'border-2 border-gray-200 border-opacity-60 dark:border-surface-accent' : ''
+      } dark:bg-surface`}
     >
       {imgSrc &&
         (href ? (
@@ -30,7 +39,7 @@ const Card = ({ title, description, imgSrc = '', href = '', linkText = '', paddi
           />
         ))}
       <div className="p-6">
-        <h2 className="mb-3 text-2xl font-bold leading-8 tracking-tight">
+        <h2 className={`mb-3 text-2xl font-bold leading-8 tracking-tight ${titleClass}`}>
           {href ? (
             <Link href={href} aria-label={`Link to ${title}`}>
               {title}

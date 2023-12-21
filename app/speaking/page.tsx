@@ -18,8 +18,10 @@ const UpcomingTalks = ({ data }) => (
         <Card
           key={index}
           title={s.title}
-          description={`${s.date} | ${s.at}\n${s.country} | ${s.city}`}
+          titleClass="text-tertiary"
+          description={`${s.date} | ${s.at}\n${s.country}${s.city ? ' | ' + s.city : ''}`}
           padding={false}
+          showBorder={false}
         />
       ))}
     </div>
@@ -57,18 +59,16 @@ const PastTalks = ({ data }) => (
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .map((s, index) => (
               <tr key={index} className="border-b dark:border-gray-700">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium whitespace-nowrap  whitespace-nowrap	"
-                >
+                <th scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
                   {s.date}
                 </th>
                 <td className="px-6 py-4">{s.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap	">{s.at}</td>
-                <td className="px-6 py-4 whitespace-nowrap	">
-                  {s.country} | {s.city}
+                <td className="px-6 py-4 whitespace-nowrap">{s.at}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {s.country}
+                  {s.city ? ' | ' + s.city : ''}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap	">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <Link
                     href={s.videoUrl}
                     className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
@@ -86,7 +86,7 @@ const PastTalks = ({ data }) => (
         <Card
           key={index}
           title={s.title}
-          description={`${s.date} | ${s.at} | ${s.country} | ${s.city}`}
+          description={`${s.date} | ${s.at} | ${s.country}${s.city ? ' | ' + s.city : ''}`}
           href={s.videoUrl}
           linkText={'Watch'}
         />
