@@ -11,7 +11,7 @@ const Card = ({
   padding = true,
   titleClass = '',
   showBorder = true,
-  className = ''
+  className = '',
 }) => (
   <div className={`hona-card md:max-w-[544px] ${padding ? 'p-4' : 'p-0'} w-full ${className}`}>
     <div

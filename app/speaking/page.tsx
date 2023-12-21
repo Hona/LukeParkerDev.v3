@@ -14,16 +14,18 @@ const UpcomingTalks = ({ data }) => (
       Upcoming Talks
     </h2>
     <div className="my-4 -m-4 mx-0 flex flex-wrap gap-4">
-      {data.map((s, index) => (
-        <Card
-          key={index}
-          title={s.title}
-          titleClass="text-tertiary"
-          description={`${s.date} | ${s.at}\n${s.country}${s.city ? ' | ' + s.city : ''}`}
-          showBorder={false}
-          padding={false}
-        />
-      ))}
+      {data
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .map((s, index) => (
+          <Card
+            key={index}
+            title={s.title}
+            titleClass="text-tertiary"
+            description={`${s.date} | ${s.at}\n${s.country}${s.city ? ' | ' + s.city : ''}`}
+            showBorder={false}
+            padding={false}
+          />
+        ))}
     </div>
   </>
 )
@@ -90,7 +92,8 @@ const PastTalks = ({ data }) => (
           href={s.videoUrl}
           linkText={'Watch'}
           showBorder={false}
-          padding={false}        />
+          padding={false}
+        />
       ))}
     </div>
   </>
