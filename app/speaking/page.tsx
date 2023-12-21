@@ -2,11 +2,12 @@ import Link from '@/components/Link'
 import speakingData from '@/data/speakingData'
 import { genPageMetadata } from 'app/seo'
 
-export const metadata = genPageMetadata({ title: 'Speaking', description: 'Conferences & user groups I speak at' })
+export const metadata = genPageMetadata({
+  title: 'Speaking',
+  description: 'Conferences & user groups I speak at',
+})
 
-export default async function Page() {
-  const speakingList = speakingData
-
+export default function Page() {
   return (
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -18,24 +19,32 @@ export default async function Page() {
         </div>
         <div className="container py-12">
           <div className="-m-4 flex flex-wrap">
-            <table>
+            <table className="w-full">
+              {' '}
+              {/* Added w-full for full width */}
               <thead>
                 <tr>
-                  <td>When</td>
-                  <td>Talk</td>
-                  <td>At</td>
-                  <td>Where</td>
-                  <td>Video</td>
+                  <th>When</th> {/* Changed to th for table headers */}
+                  <th>Talk</th>
+                  <th>At</th>
+                  <th>Where</th>
+                  <th>Video</th>
                 </tr>
               </thead>
               <tbody>
-                {speakingList.map((s) => (
-                  <tr>
+                {speakingData.map((s, index) => (
+                  <tr key={index}>
                     <td>{s.date}</td>
                     <td>{s.title}</td>
                     <td>{s.at}</td>
-                    <td>{s.country} | {s.city}</td>
-                    <td><a href={s.videoUrl}>Watch</a></td>
+                    <td>
+                      {s.country} | {s.city}
+                    </td>
+                    <td>
+                      <a href={s.videoUrl} target="_blank" rel="noopener noreferrer">
+                        Watch
+                      </a>
+                    </td>
                   </tr>
                 ))}
               </tbody>
