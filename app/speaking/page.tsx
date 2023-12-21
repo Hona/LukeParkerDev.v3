@@ -13,15 +13,15 @@ const UpcomingTalks = ({ data }) => (
     <h2 className="text-2xl font-bold leading-8 tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl sm:leading-9">
       Upcoming Talks
     </h2>
-    <div className="my-4">
+    <div className="my-4 -m-4 mx-0 flex flex-wrap gap-4">
       {data.map((s, index) => (
         <Card
           key={index}
           title={s.title}
           titleClass="text-tertiary"
           description={`${s.date} | ${s.at}\n${s.country}${s.city ? ' | ' + s.city : ''}`}
-          padding={false}
           showBorder={false}
+          padding={false}
         />
       ))}
     </div>
@@ -81,7 +81,7 @@ const PastTalks = ({ data }) => (
         </tbody>
       </table>
     </div>
-    <div className="md:hidden">
+    <div className="md:hidden my-4 -m-4 mx-0 flex flex-wrap gap-4">
       {data.map((s, index) => (
         <Card
           key={index}
@@ -89,7 +89,8 @@ const PastTalks = ({ data }) => (
           description={`${s.date} | ${s.at} | ${s.country}${s.city ? ' | ' + s.city : ''}`}
           href={s.videoUrl}
           linkText={'Watch'}
-        />
+          showBorder={false}
+          padding={false}        />
       ))}
     </div>
   </>

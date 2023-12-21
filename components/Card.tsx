@@ -11,8 +11,9 @@ const Card = ({
   padding = true,
   titleClass = '',
   showBorder = true,
+  className = ''
 }) => (
-  <div className={`md:max-w-[544px] ${padding ? 'p-4' : 'p-4 md:p-0'} w-full md:w-1/2`}>
+  <div className={`hona-card md:max-w-[544px] ${padding ? 'p-4' : 'p-0'} w-full ${className}`}>
     <div
       className={`${imgSrc ? 'h-full' : ''} overflow-hidden rounded-md ${
         showBorder ? 'border-2 border-gray-200 border-opacity-60 dark:border-surface-accent' : ''
