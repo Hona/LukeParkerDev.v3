@@ -31,7 +31,14 @@ const speakingData = [
         at: 'Brisbane Full Stack UG',
         videoUrl: 'https://www.youtube.com/watch?v=dMgj1MdwrRE'
     },
-    
+    {
+        date: '2024-09-20',
+        title: 'Vertical Slice Architecture: How Does it Compare to Clean Architecture?',
+        country: 'Australia',
+        city: 'Brisbane',
+        at: 'Brisbane Full Stack UG',
+        videoUrl: 'https://www.youtube.com/watch?v=dMgj1MdwrRE'
+    },
 ]
 
 export default speakingData

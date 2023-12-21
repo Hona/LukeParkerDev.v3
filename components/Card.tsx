@@ -1,8 +1,9 @@
 import Image from './Image'
 import Link from './Link'
+import React from 'react'
 
-const Card = ({ title, description, imgSrc = null, href, linkText, padding = true }) => (
-  <div className={`md max-w-[544px] ${padding ? 'p-4' : 'p-4 md:p-0'} md:w-1/2}`}>
+const Card = ({ title, description, imgSrc = null, href = null, linkText, padding = true }) => (
+  <div className={`md:max-w-[544px] ${padding ? 'p-4' : 'p-4 md:p-0'} w-full md:w-1/2`}>
     <div
       className={`${
         imgSrc ? 'h-full' : ''
@@ -38,7 +39,14 @@ const Card = ({ title, description, imgSrc = null, href, linkText, padding = tru
             title
           )}
         </h2>
-        <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{description}</p>
+        <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">
+          {description.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
+        </p>
         {href && (
           <Link
             href={href}

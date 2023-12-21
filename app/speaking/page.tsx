@@ -18,9 +18,7 @@ const UpcomingTalks = ({ data }) => (
         <Card
           key={index}
           title={s.title}
-          description={`${s.date} | ${s.at} | ${s.country} | ${s.city}`}
-          href={s.videoUrl}
-          linkText={'Watch'}
+          description={`${s.date} | ${s.at}\n${s.country} | ${s.city}`}
           padding={false}
         />
       ))}
