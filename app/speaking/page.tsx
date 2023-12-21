@@ -44,29 +44,31 @@ export default function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {speakingData.map((s, index) => (
-                    <tr key={index} className="border-b dark:border-gray-700">
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium whitespace-nowrap  whitespace-nowrap	"
-                      >
-                        {s.date}
-                      </th>
-                      <td className="px-6 py-4">{s.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap	">{s.at}</td>
-                      <td className="px-6 py-4 whitespace-nowrap	">
-                        {s.country} | {s.city}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap	">
-                        <Link
-                          href={s.videoUrl}
-                          className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                  {speakingData
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((s, index) => (
+                      <tr key={index} className="border-b dark:border-gray-700">
+                        <th
+                          scope="row"
+                          className="px-6 py-4 font-medium whitespace-nowrap  whitespace-nowrap	"
                         >
-                          Watch
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                          {s.date}
+                        </th>
+                        <td className="px-6 py-4">{s.title}</td>
+                        <td className="px-6 py-4 whitespace-nowrap	">{s.at}</td>
+                        <td className="px-6 py-4 whitespace-nowrap	">
+                          {s.country} | {s.city}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap	">
+                          <Link
+                            href={s.videoUrl}
+                            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                          >
+                            Watch
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
