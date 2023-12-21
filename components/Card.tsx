@@ -2,7 +2,7 @@ import Image from './Image'
 import Link from './Link'
 import React from 'react'
 
-const Card = ({ title, description, imgSrc = null, href = null, linkText, padding = true }) => (
+const Card = ({ title, description, imgSrc = null, href = null, linkText = "", padding = true }) => (
   <div className={`md:max-w-[544px] ${padding ? 'p-4' : 'p-4 md:p-0'} w-full md:w-1/2`}>
     <div
       className={`${
