@@ -48,3 +48,5 @@ yarn-error.log*
 
 # Custom
 .idea/
+node_modules
+.env
