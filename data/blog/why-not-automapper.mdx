@@ -1,0 +1,347 @@
+---
+title: Why not AutoMapper? What should I use?
+date: '2024-08-08'
+tags:
+  - Vertical Slice Architecture
+  - CSharp
+  - dotnet
+  
+summary: >-
+  There's a lot of hate for AutoMapper in the .NET community. Where is that coming from? What should I use instead? I'll break down the pain, and provide some guidance.
+---
+
+## Introduction
+
+[AutoMapper](https://github.com/AutoMapper/AutoMapper) is one of the most popular mapping libraries in the .NET ecosystem. It is currently sitting at around ~10k stars on GitHub.
+The library was written by Jimmy Bogard (the VSA guy, the MediatR guy, etc) and has been around for a long time.
+
+The library is meant to reduce the amount of manual, convention/pattern based mapping code you write in your application.
+Straight from the README:
+
+> AutoMapper is a simple little library built to solve a deceptively complex problem - getting rid of code that mapped one object to another. This type of code is rather dreary and boring to write, so why not invent a tool to do it for us
+
+A lot of the pain does come from people using the library in an unintented way - for complex mappings that are not following a convention.
+
+Jimmy writes about this in his blog post: [Dissecting AutoMapper Programming Horror](https://www.jimmybogard.com/dissecting-automapper-progamming-horror/)
+
+The main takeaway for using AutoMapper is that it should be used for really simple mappings, e.g. for this example:
+
+```csharp
+public record WeatherForecast(DateTime Date, int TemperatureC, string Summary);
+public record WeatherForecastDto(DateTime Date, int TemperatureC, string Summary);
+```
+
+The convention is clear, and the mapping is simple - less code to write. Its a big win to use the library!
+
+## The source of hate
+
+I've personally used AutoMapper for a long time now. Its included in many popular templates, like many of the Clean Architecture templates that long dominate the .NET Enterprise space.
+
+A lot of the hate is chalked up to the misuse of the library, which Jimmy breaks down greatly in the linked blog post.
+I won't comment further on that, as he does a great job. 
+
+The second main reason that goes around is performance. Yes - it uses reflection, and that is slower than manual/source generated code.
+That is a valid reason.
+
+The final reason, which is the main one for me, is that it reduces cohesion between code. This is a big one in the Vertical Slice Architecture space, and that is what I spend a lot of time working within.
+Optimising for developer confidence, and refactor-ability.
+
+Now what do I mean by that?
+
+### Context on a Sample application
+
+For the rest of the blog post, I will use a very simple sample application, using the following Domain entity that will be mapped into DTOs using different methods.
+
+```csharp
+public class WeatherForecast
+{
+    public DateOnly Date { get; set; }
+    public int TemperatureC { get; set; }
+    public string? Summary { get; set; }
+}
+```
+
+> Note: All the code from this article is available on my [GitHub here 🧑‍💻](https://github.com/Hona/ReferenceCode/tree/main/AutoMapperBlog)
+
+
+Each mapping sample has its own copy of the following DTO, to look into the cohesion that an IDE can see.
+
+```csharp
+public class WeatherForecastDto
+{
+    public DateOnly Date { get; set; }
+    public int TemperatureC { get; set; }
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public string? Summary { get; set; }
+}
+```
+
+We could even make it so that the TemperatureF is a calculated property from mapping configuration, but I want to keep it really simple.
+
+### Reduced Cohesion
+
+To put it very quickly, because the library is implemented using reflection, the links between objects and properties is not clear.
+
+To configure AutoMapper, we simply add this line to a mapping configuration (probably through a `Profile`)
+
+```csharp
+CreateMap<WeatherForecast, WeatherForecastDto>();
+```
+
+![No Usages found for properties inside of Rider](/static/images/blog/automapper/automapper-missing-usages.png)
+
+In this example, we can see that none of the fields are show have any Usages. This means it can't find where it is set from.
+When I refactor in an area I don't know well, potentially remove fields from the Domain entity, or even rename them - I have no confidence that the mapping will still work.
+
+This is a big problem for me, and I know it is for others too.
+
+## What can I do otherwise?
+
+Yes, you can manually map each property with AutoMapper, but that is directly counter to the point of the library.
+
+### Manual Mapping
+
+Okay, we want a more cohesive and safe codebase, how about we just manually map the properties?
+
+```csharp
+public static class Mapping
+{
+    public static WeatherForecastDto ToDto(this WeatherForecast entity)
+    {
+        return new WeatherForecastDto
+        {
+            Date = entity.Date,
+            TemperatureC = entity.TemperatureC,
+            Summary = entity.Summary
+        };
+    }
+}
+```
+
+Now with this, we get the following cohesion in the IDE:
+
+![Usages found for properties inside of Rider](/static/images/blog/automapper/manual-cohesion.png)
+
+That's pretty good! I can see where the properties are being used, and I can refactor with confidence.
+
+However, we feel the same pain that caused Jimmy to write AutoMapper. For a lot of mapping, this is a lot of code!
+
+### Mapperly
+
+This is where I want to introduce [Mapperly](https://mapperly.riok.app/). Similar to my AutoMapper introduction, here is a quote from the public site:
+
+> A .NET source generator for generating object mappings. No runtime reflection.
+
+That sounds pretty awesome. A source generator, if you don't know generates code at compile time. The mapper wil basically create the mapping we did in the Manual section, but without us having to write it.
+
+Let's set it up!
+
+There are several ways to do it, however I like the static extension method syntax.
+
+```csharp
+[Mapper]
+public static partial class Mapper
+{
+    public static partial WeatherForecastDto ToDto(WeatherForecast entity);
+}
+```
+
+That's it - inspecting the source generated output, we can see the generated code is very similar:
+
+```csharp
+// <auto-generated />
+
+...
+
+[global::System.CodeDom.Compiler.GeneratedCode("Riok.Mapperly", "3.6.0.0")]
+public static partial global::App.Mapperly.WeatherForecastDto ToDto(global::Domain.WeatherForecast entity)
+{
+    var target = new global::App.Mapperly.WeatherForecastDto();
+    target.Date = entity.Date;
+    target.TemperatureC = entity.TemperatureC;
+    target.Summary = entity.Summary;
+    return target;
+}
+```
+
+In this sample comparison I didn't use extension method syntax, because of many conflicting namespaces.
+So for this case I called the map method like so:
+`var mapperlyDto = App.Mapperly.Mapper.ToDto(weatherForecast);`
+
+I would suggest using the extension method syntax, as it is much cleaner...
+
+Anyway, as you would expect the cohesion is the same as the manual mapping.
+
+![Usages found for properties inside of Rider](/static/images/blog/automapper/mapperly-cohesion.png)
+
+Although it has the same great cohesion, we have the added benefit that we don't have to write the mapping code!
+This is the best of both worlds, convention based mapping, but manual mapping cohesion!
+
+## What about performance?
+
+Of course, we know AutoMapper is slow, but how slow?
+How does Mapperly compare to manual mapping?
+
+I wrote a simple benchmark to compare. The whole snippet is this:
+
+`Program.cs`
+```csharp
+BenchmarkRunner.Run<Benchmarks>();
+
+public class Benchmarks
+{
+    private static readonly WeatherForecast DomainEntity = new WeatherForecast
+    {
+        Date = new DateOnly(2021, 1, 1),
+        TemperatureC = 25,
+        Summary = "Mild"
+    };
+    
+    [Benchmark(Baseline = true)]
+    public int Manual()
+    {
+        var dto = DomainEntity.ToDto();
+
+        return dto.TemperatureF;
+    }
+    
+    private static readonly IMapper Mapper = new MapperConfiguration(cfg => cfg.AddProfile<App.AutoMapper.Mapping>()).CreateMapper();
+    
+    [Benchmark]
+    public int AutoMapper()
+    {
+        var dto = Mapper.Map<App.AutoMapper.WeatherForecastDto>(DomainEntity);
+
+        return dto.TemperatureF;
+    }
+    
+    [Benchmark]
+    public int Mapperly()
+    {
+        var dto = App.Mapperly.Mapper.ToDto(DomainEntity);
+
+        return dto.TemperatureF;
+    }
+}
+```
+
+The results come back very clear. 
+
+Note - I marked the manual mapping as the baseline. That means both Mapperly and AutoMapper get compared to the manual mapping.
+
+```bash
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.3880/23H2/2023Update/SunValley3)
+Intel Core i7-14700K, 1 CPU, 28 logical and 20 physical cores
+.NET SDK 8.0.303
+  [Host]     : .NET 8.0.7 (8.0.724.31311), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.7 (8.0.724.31311), X64 RyuJIT AVX2
+
+
+| Method     | Mean      | Error     | StdDev    | Ratio | RatioSD |
+|----------- |----------:|----------:|----------:|------:|--------:|
+| Manual     |  4.094 ns | 0.0565 ns | 0.0501 ns |  1.00 |    0.02 |
+| AutoMapper | 35.244 ns | 0.1533 ns | 0.1280 ns |  8.61 |    0.11 |
+| Mapperly   |  4.077 ns | 0.0278 ns | 0.0371 ns |  1.00 |    0.01 |
+```
+
+Awesome - Mapperly is as fast as manual mapping, and AutoMapper is 8.61 times slower!
+
+This really proves that modern mapping libraries that use source generators are the way to go.
+
+## EF Core projections
+
+Once you start building real world apps inside of an AutoMapper codebase, a great feature is automatically projecting SQL queries into DTOs.
+It reduces the amount of fields coming back over the wire, and can be a big performance win.
+
+How does this work in AutoMapper?
+
+Take the following example DbContext:
+
+```csharp
+public class WeatherForecastContext : DbContext
+{
+    public DbSet<WeatherForecast> WeatherForecasts { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseInMemoryDatabase("WeatherForecast");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<WeatherForecast>().HasKey(e => e.Date);
+    }
+}
+```
+
+Let's say we want to query a slim version of `WeatherForecast` data.
+
+The DTO would look like so:
+
+```csharp
+public record WeatherProjection(DateOnly Date, int TemperatureC);
+```
+
+Using aggressive inlining (again, in a real app you would be using `Profile`s)
+
+```csharp
+private readonly IConfigurationProvider _automapperConfig = new MapperConfiguration(cfg => cfg.CreateMap<WeatherForecast, WeatherProjection>());
+```
+
+Using the AutoMapper configuration we setup, we can project any query into the DTO.
+
+Lets grab the first record.
+
+```csharp
+public string AutoMapperProjection()
+{
+    var output = _context.WeatherForecasts
+        .AsQueryable()
+        .ProjectTo<WeatherProjection>(_automapperConfig)
+        .First();
+
+    return output.ToString();
+}
+```
+
+Okay that's pretty awesome!
+
+We really like this feature, and we want to use it with Mapperly.
+
+Well the good news is you can do this!
+
+First, lets create the mapper.
+
+```csharp
+[Mapper]
+public static partial class WeatherProjectionMapper
+{
+    public static partial IQueryable<EfCoreSample.WeatherProjection> Project(this IQueryable<WeatherForecast> q);
+}
+```
+
+Now we can use the following code to project the query very similarly to AutoMapper:
+
+```csharp
+public string MapperlyProjection()
+{
+    var output = _context.WeatherForecasts
+        .AsQueryable()
+        .Project()
+        .First();
+    
+    return output.ToString();
+}
+```
+
+## Conclusion
+
+- AutoMapper is great to reduce code to write, but people misuse it, its slow (comparatively), and reduces cohesion (big deal)
+- Manual mapping is great for cohesion, but a lot of code to write.
+- Mapperly is the best of both worlds, and is as fast as manual mapping. ⭐
+
+I hope you enjoyed this blog post, and I hope you give Mapperly a try in your next project!
+
+If you like the sound of Mapperly, then good news because its part of my [Vertical Slice Architecture template](https://github.com/Hona/VerticalSliceArchitecture)! 
+
+Finally, find the complete sample code here: [https://github.com/Hona/ReferenceCode/tree/main/AutoMapperBlog](https://github.com/Hona/ReferenceCode/tree/main/AutoMapperBlog)
