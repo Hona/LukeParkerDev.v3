@@ -101,7 +101,7 @@ Yes, you can manually map each property with AutoMapper, but that is directly co
 
 ### Manual Mapping
 
-Okay, we want a more cohesive and safe codebase, how about we just manually map the properties?
+Okay, we want a more safe codebase with static analysis, how about we just manually map the properties?
 
 ```csharp
 public static class Mapping
@@ -339,7 +339,7 @@ public string MapperlyProjection()
 ## Conclusion
 
 - AutoMapper is great to reduce code to write, but people misuse it, its slow (comparatively), and reduces static analysis (big deal)
-- Manual mapping is great for cohesion, but a lot of code to write.
+- Manual mapping is great for static analysis, but a lot of code to write.
 - Mapperly is the best of both worlds, and is as fast as manual mapping. ⭐
 
 I hope you enjoyed this blog post, and I hope you give Mapperly a try in your next project!
