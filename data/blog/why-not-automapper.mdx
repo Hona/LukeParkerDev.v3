@@ -43,7 +43,7 @@ I won't comment further on that, as he does a great job.
 The second main reason that goes around is performance. Yes - it uses reflection, and that is slower than manual/source generated code.
 That is a valid reason.
 
-The final reason, which is the main one for me, is that it reduces cohesion between code. This is a big one in the Vertical Slice Architecture space, and that is what I spend a lot of time working within.
+The final reason, which is the main one for me, is that it reduces the ability for static analysis between code. This is a big one in the Vertical Slice Architecture space, and that is what I spend a lot of time working within.
 Optimising for developer confidence, and refactor-ability.
 
 Now what do I mean by that?
@@ -64,7 +64,7 @@ public class WeatherForecast
 > Note: All the code from this article is available on my [GitHub here 🧑‍💻](https://github.com/Hona/ReferenceCode/tree/main/AutoMapperBlog)
 
 
-Each mapping sample has its own copy of the following DTO, to look into the cohesion that an IDE can see.
+Each mapping sample has its own copy of the following DTO, to look into the static analysis that an IDE can see.
 
 ```csharp
 public class WeatherForecastDto
@@ -78,7 +78,7 @@ public class WeatherForecastDto
 
 We could even make it so that the TemperatureF is a calculated property from mapping configuration, but I want to keep it really simple.
 
-### Reduced Cohesion
+### Reduced static analysis
 
 To put it very quickly, because the library is implemented using reflection, the links between objects and properties is not clear.
 
@@ -118,7 +118,7 @@ public static class Mapping
 }
 ```
 
-Now with this, we get the following cohesion in the IDE:
+Now with this, we get the following static analysis in the IDE:
 
 ![Usages found for properties inside of Rider](/static/images/blog/automapper/manual-cohesion.png)
 
@@ -170,12 +170,12 @@ So for this case I called the map method like so:
 
 I would suggest using the extension method syntax, as it is much cleaner...
 
-Anyway, as you would expect the cohesion is the same as the manual mapping.
+Anyway, as you would expect the static analysis is the same as the manual mapping.
 
 ![Usages found for properties inside of Rider](/static/images/blog/automapper/mapperly-cohesion.png)
 
-Although it has the same great cohesion, we have the added benefit that we don't have to write the mapping code!
-This is the best of both worlds, convention based mapping, but manual mapping cohesion!
+Although it has the same great static analysis, we have the added benefit that we don't have to write the mapping code!
+This is the best of both worlds, convention based mapping, but manual mapping's static analysis!
 
 ## What about performance?
 
@@ -245,6 +245,8 @@ Intel Core i7-14700K, 1 CPU, 28 logical and 20 physical cores
 ```
 
 Awesome - Mapperly is as fast as manual mapping, and AutoMapper is 8.61 times slower!
+
+Note: The performance here is within nanoseconds, so for most applications that will be negligible. I don't see it as a key factor in this case to pick Mapperly over AutoMapper.
 
 This really proves that modern mapping libraries that use source generators are the way to go.
 
@@ -336,7 +338,7 @@ public string MapperlyProjection()
 
 ## Conclusion
 
-- AutoMapper is great to reduce code to write, but people misuse it, its slow (comparatively), and reduces cohesion (big deal)
+- AutoMapper is great to reduce code to write, but people misuse it, its slow (comparatively), and reduces static analysis (big deal)
 - Manual mapping is great for cohesion, but a lot of code to write.
 - Mapperly is the best of both worlds, and is as fast as manual mapping. ⭐
 
