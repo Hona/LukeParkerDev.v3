@@ -121,7 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://static.cloudflareinsights.com/beacon.min.js"
           data-cf-beacon='{"token": "8d3a1414c3204cfbb105eac703f01690"}'
         ></script>
-        <Script 
+        <Script
           id="microsoft-clarity"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
