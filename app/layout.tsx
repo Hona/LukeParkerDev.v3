@@ -11,6 +11,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
 import Image from 'next/image'
+import Script from 'next/script'
 
 const open_sans = Open_Sans({
   subsets: ['latin'],
@@ -120,6 +121,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://static.cloudflareinsights.com/beacon.min.js"
           data-cf-beacon='{"token": "8d3a1414c3204cfbb105eac703f01690"}'
         ></script>
+        <Script
+          id="microsoft-clarity"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "pfq3nookbp");
+            `,
+          }}
+        />
         {/* End Cloudflare Web Analytics */}
       </body>
     </html>
