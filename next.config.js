@@ -8,8 +8,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const ContentSecurityPolicy = `
   default-src 'self' disqus.com c.disquscdn.com;
   script-src 'self' 'unsafe-eval' 'unsafe-inline' 
-    google-analytics.com lukeparker-dev.disqus.com 
-    googletagmanager.com static.cloudflareinsights.com
+    *.google-analytics.com lukeparker-dev.disqus.com 
+    *.googletagmanager.com www.googletagmanager.com gtag
+    static.cloudflareinsights.com
     *.clarity.ms *.vercel.live;
   style-src 'self' 'unsafe-inline' c.disquscdn.com;
   img-src * blob: data: google-analytics.com stats.g.doubleclick.net 
